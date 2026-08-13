@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Livestock Assistance Software - Home</title>
+    
+    <style>
+        :root {
+            --bg-color: #faf9f6;          /* Warm soft cream background */
+            --card-bg: #ffffff;           /* Clean sheet white */
+            --text-main: #1e293b;         /* Professional charcoal */
+            --text-muted: #64748b;        /* Slate grey for secondary info */
+            --primary: #115e59;           /* Deep classic agricultural teal */
+            --primary-hover: #0f766e;     /* Hover state green */
+            --accent-warm: #b45309;       /* Rich amber for T1 */
+            --accent-warm-bg: #fffbeb;    
+            --accent-green-bg: #f0fdf4;   /* Mint green for T2 */
+            --border-color: #e2e8f0;       /* Divider borders */
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08);
+            --border-radius: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px; /* Slightly wider for the homepage grid */
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        .top-navbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+        }
+
+        .logo-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #1e293b;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-title span {
+            color: var(--primary);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 0px 15px;
+            border-radius: 6px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s ease-in-out;
+            text-decoration: none;
+            user-select: none;
+        }
+
+        .btn-secondary {
+            background-color: #f1f5f9;
+            color: #475569;
+            border-color: #cbd5e1;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e2e8f0;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        main {
+            flex-grow: 1;
+            padding: 32px 16px;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #0f172a;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .title-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary);
+            border-radius: 50%;
+        }
+
+        .hero-section {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+        }
+
+        .hero-section h2 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 12px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-section p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto 20px auto;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .tool-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: #cbd5e1;
+        }
+
+        .tool-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .tool-icon {
+            font-size: 2rem;
+            background-color: #f1f5f9;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+        }
+
+        /* Badge styles adapted from your original code */
+        .category-badge {
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-amber { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a;}
+        .badge-emerald { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0;}
+        .badge-sky { background-color: #e0f2fe; color: #075985; border: 1px solid #bae6fd;}
+        .badge-purple { background-color: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff;}
+
+        .tool-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .tool-card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            flex-grow: 1; /* Pushes button to bottom */
+        }
+
+        .info-panel {
+            background-color: var(--accent-green-bg);
+            border: 1px solid #dcfce7;
+            border-radius: var(--border-radius);
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .info-panel h3 {
+            font-size: 1.1rem;
+            color: #115e59;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-panel p {
+            font-size: 0.95rem;
+            color: #166534;
+        }
+
+        footer {
+            background-color: #0f172a;
+            color: #94a3b8;
+            padding: 24px 0;
+            border-top: 1px solid #1e293b;
+            font-size: 0.85rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        footer p {
+            max-width: 650px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        footer a {
+            color: #cbd5e1;
+            text-decoration: underline;
+        }
+        
+        footer a:hover {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="top-navbar">
+        <div class="container navbar-content">
+            <a href="#" class="logo-section">
+                <span class="logo-icon">🐏</span>
+                <h1 class="logo-title">
+                    [Market Livestock Assistance sw] <span>Homepage</span>
+                </h1>
+            </a>
+            <div>
+                <a href="#about" class="btn btn-secondary">
+                    About this page
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <section class="hero-section">
+            <h2>Homepage</h2>
+            <p>This is my homepage for my tools I created. If you want to learn more, press the "About this page" button! </p>
+        </section>
+
+        <h2 class="section-title">
+            <div class="title-dot"></div>
+            <span>Calculators and Tools</span>
+        </h2>
+
+        <div class="tools-grid">
+            
+            <!-- Tool Card 1: The existing Rate of Gain calculator -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">🏋</div>
+                    <span class="category-badge badge-emerald">Paperwork Tool Included</span>
+                </div>
+                <h3>Rate of Gain Calculator</h3>
+                <p>Track your market lamb's rate of gain, set up recommended feeding programs, adjust rate of gain, print/export/import rate of gain paperwork, and continously track your lamb's weight</p>
+                <a href="untitledpage1" class="btn btn-primary btn-block">
+                    Open Page →
+                </a>
+            </div>
+
+            <!-- Tool Card 2: Placeholder for a future tool -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">⏳</div>
+                    <span class="category-badge badge-amber">Add on</span>
+                </div>
+                <h3>Fair Weight Predictor & Target</h3>
+                <p>Calculate your fair weight based on your weight. Also figure out your rate of gain target. I love this as an addition to my other calculator!</p>
+                <a href="#" class="btn btn-secondary btn-block">
+                    Open Calculator →
+                </a>
+            </div>
+
+            <!-- Tool Card 3: Placeholder for a future tool -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">💳</div>
+                    <span class="category-badge badge-sky">Paperwork Tool Included</span>
+                </div>
+                <h3>Expense Tracker </h3>
+                <p>It's basically excel but for your sheep! I made this specifically around products, stores, and other things sheep use! It combines your paperwork as an excel-like program. Just make sure to keep your receipts!</p>
+                <a href="#" class="btn btn-secondary btn-block">
+                    Open Tool →
+                </a>
+            </div>
+
+            <!-- Tool Card 4: Placeholder for a future tool -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">🙋</div>
+                    <span class="category-badge badge-purple">PAPERWORK TOOL INCLUDED</span>
+                </div>
+                <h3>Volunteer Hour Tracker</h3>
+                <p>I havent made this page yet, but I will soon! I really want this to properly track my volunteer hours. Especially since I've been at multiple places with hundreds of hours. It's needed, not only for your market minimum requirements, but for your flock.</p>
+                <a href="#" class="btn btn-secondary btn-block">
+                    Dont open it yet →
+                </a>
+            </div>
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">🤔</div>
+                    <span class="category-badge badge-emerald">Tool</span>
+                </div>
+                <h3>Calculator</h3>
+                <p>A lightweight calculator with extra features around sheep feeding. Good especially because not all computers come with calculator apps apperentally</p>
+                <a href="untitledpage1" class="btn btn-primary btn-block">
+                    Open Page →
+                </a>
+            </div>
+
+            <!-- Tool Card 2: Placeholder for a future tool -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">?</div>
+                    <span class="category-badge badge-amber">Untitled</span>
+                </div>
+                <h3>Coming Soon!</h3>
+                <p>Nothing here, but it's good to have placeholders! Might have another tool coming here sooner or later</p>
+                <a href="#" class="btn btn-secondary btn-block">
+                    Coming soon guys just wait →
+                </a>
+            </div>
+
+        </div>
+
+        <section id="about" class="info-panel">
+            <h3>Why did I Built This</h3>
+            <p>This originally started when I was figuring out my sheep weights and how to manage them. My goal was for my sheep to weight 159 lbs at fair so I could get the most out of my lamb. When I was first taught about feeding sheep, I was told to only give 4% of the sheep's body weight. It's a good rule of thumb, but not always what I need.
+            <br/> <br/>
+            I made my own formula for calculating my sheep weight and how much I need to be feeding it. I used this for about 3 or 4 months, which was fine. It took me about 5 minutes per sheep to figure out what my calculator does in a couple clicks
+            <br/> <br/>
+            I was suggested by another brilliant family to look at online calculators. I saw one made by a state university, but it literally only calculated the rate of gain between two feedings. It's okay, if you know what you are doing. I already knew how to calculate that. However, it didn't explain much for what these numbers where and why they were useful. 
+            <br/> <br/>
+            That inspired me to create something that used my formula, explained my method, and did exactly what I needed it to. I had to jog my memory about coding since I used to be great at it, then I got very rusty in the past 5ish years or so. YouTube and W3S was very helpful and kind to me. 
+            <br/> <br/>
+            That tool ended up being very useful since I needed to keep track of it for my sake, and my family's sake because I already know what I'm doing, but I like to have conversations about things like this. It's hard explaining weights and dates and a bunch of randomish numbers, even thought I was keeping track of it! I ended up using this tool to figure out not only my sheep, but also my club member's sheep, and people who needed my help with sheep. 
+            <br/> <br/>
+            I figured out how to publish this to github. I was originally going to have it be a downloadable html app, but iPhones do not allow javascript and paperwork file exporting. I found out how to host a website for free privately under github. I hope to one day get a custom domain but its just a useless subscription to worry about all for the sake of prettiness. Luckily QR codes are free to make so I dont have to waste peoples' time.
+            <br/> <br/>
+            Now that fair is over, I needed to make more tools because I had more kinds of paperwork to do. I figured I might as well polish everything and create a homepage. There are still some parts unfinished, but nothing man-made is perfect! 
+            <br/> <br/>
+            I discussed with my family about making my content available for public use. We discussed a name for my software. I was also suggested to have a buymeacoffee (coming soon as of writing this); so that I may pay for a proper domain one day, instead of a weird github one. As well as supporting my own sheep and livestock as I am going into college in a few years. 
+            <br/><br/>
+            If you have any questions, concerns, or requests for a feature/page, or an error/bug you caught, please let me know here: [hmmmm i need to make an email to put here]</p>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p><strong>Disclaimer:</strong> this website requires no cookies. All information is calculated on the page, and info does not leave the site unless you decide to Export for paperwork purposes.</p>
+            <br>
+            <p>Have a fun <script>document.write(new Date().getFullYear())</script> fair! -- Market Livestock Assistance Software</p>
+        </div>
+    </footer>
+
+</body>
+</html>
