@@ -1,9 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <head>
-        <link rel="manifest" href="manifest.json">
-    </head>
+    <script>
+  // Check if the browser supports Service Workers
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('pwabuilder-sw.js')
+        .then(reg => console.log('Service Worker registered!', reg.scope))
+        .catch(err => console.log('Registration failed:', err));
+    });
+  }
+    </script>
+    <link rel="manifest" href="manifest.json">
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Market Livestock Assistance Software - Home</title>
