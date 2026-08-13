@@ -4,9 +4,9 @@
   "display": "standalone",
   "name": "Market Livestock Assistance Software",
   "orientation": "any",
-  "scope": "/",
+  "scope": "./",
   "short_name": "MLA",
-  "start_url": "/homepage",
+  "start_url": "./homepage",
   "theme_color": "#ffffff",
   "id": "marketlivestockassistancesoftware",
   "description": "I made this to help farmers understand how to care for their sheep more. It helps you understand numbers for your sheeps' weight, feed, and growth. It also makes paperwork and tracking numbers very easy.",
@@ -14,9 +14,9 @@
   "categories": [
     "business",
     "education",
-    "health &amp; fitness",
+    "health & fitness",
     "productivity"
-  ]
+  ],
   "icons": [
     {
       "src": "launchericon-192-192.png",
@@ -28,4 +28,5 @@
       "sizes": "512x512",
       "type": "image/png"
     }
+  ]
 }
