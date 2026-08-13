@@ -1,0 +1,505 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sheep Feed & Weight Calculator -- Market Livestock Assistance Software</title>
+    <style>
+        :root {
+            --bg-color: #faf9f6;          /* Warm soft cream background */
+            --card-bg: #ffffff;           /* Clean sheet white */
+            --text-main: #1e293b;         /* Professional charcoal */
+            --text-muted: #64748b;        /* Slate grey for secondary info */
+            --primary: #115e59;           /* Deep classic agricultural teal */
+            --primary-hover: #0f766e;     /* Hover state green */
+            --border-color: #cbd5e1;       /* Visible clean borders */
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08);
+            --border-radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.4;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        /* Navigation Header */
+        .top-navbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            padding: 14px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            font-size: 1.4rem;
+        }
+
+        .logo-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #1e293b;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-title span {
+            color: var(--primary);
+        }
+
+        /* Calculator Card Design */
+        .calculator-container {
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+
+        .calculator-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 12px;
+        }
+
+        .section-header h2 {
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #0f172a;
+        }
+
+        .title-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary);
+            border-radius: 50%;
+        }
+
+        /* Premium Digital Display Screen */
+        .calc-screen {
+            background-color: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px 18px;
+            text-align: right;
+            min-height: 86px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-x: auto;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
+        }
+
+        .calc-formula-display {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #0284c7;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+        }
+
+        .calc-result-display {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.6rem;
+            font-weight: 750;
+            color: #0f766e;
+            letter-spacing: 0.02em;
+        }
+
+        /* Keypad Grid layout */
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .calc-btn {
+            background-color: #f1f5f9;
+            color: var(--text-main);
+            border: 1px solid #cbd5e1;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.1s ease-in-out;
+            user-select: none;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .calc-btn:hover {
+            background-color: #e2e8f0;
+            border-color: #94a3b8;
+        }
+
+        .calc-btn:active {
+            transform: scale(0.96);
+        }
+
+        .calc-btn-op {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            border-color: #bae6fd;
+        }
+
+        .calc-btn-op:hover {
+            background-color: #bae6fd;
+        }
+
+        /* Dedicated Feed buttons */
+        .calc-btn-special {
+            background-color: var(--primary);
+            color: #ffffff;
+            border-color: #0d4f4b;
+        }
+
+        .calc-btn-special:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .calc-btn-clear {
+            background-color: #fef2f2;
+            color: #be123c;
+            border-color: #fca5a5;
+        }
+
+        .calc-btn-clear:hover {
+            background-color: #fee2e2;
+        }
+
+        .calc-btn-equal {
+            background-color: #115e59;
+            color: #ffffff;
+            grid-column: span 2;
+            font-size: 1.3rem;
+            border-color: #0d4f4b;
+        }
+
+        .calc-btn-equal:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Quick Preset weights for instant show calculations */
+        .presets-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .preset-btn {
+            flex: 1;
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #475569;
+            padding: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.1s ease-in-out;
+        }
+
+        .preset-btn:hover {
+            background-color: #f1f5f9;
+            border-color: #94a3b8;
+        }
+
+        .disclaimer-text {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-align: center;
+            line-height: 1.4;
+            margin-top: 8px;
+        }
+
+        footer {
+            background-color: #0f172a;
+            color: #94a3b8;
+            padding: 24px 0;
+            border-top: 1px solid #1e293b;
+            font-size: 0.75rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        footer p {
+            max-width: 400px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="top-navbar">
+        <div class="container navbar-content">
+            <div class="logo-section">
+                <span class="logo-icon">🐏</span>
+                <h1 class="logo-title">
+                    [Josephine County] <span>unofficial rate of gain calc</span>
+                </h1>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <div class="calculator-container">
+            <section class="calculator-card">
+                
+                <div class="section-header">
+                    <h2>Sheep Basic Calculator</h2>
+                </div>
+
+                <!-- Display Unit -->
+                <div class="calc-screen">
+                    <div id="calc-formula" class="calc-formula-display">0</div>
+                    <div id="calc-result" class="calc-result-display">0</div>
+                </div>
+
+                <!-- Fast weight helper buttons -->
+                <div class="presets-row">
+                    <button type="button" class="preset-btn" onclick="loadWeight(75)">75 lbs</button>
+                    <button type="button" class="preset-btn" onclick="loadWeight(100)">100 lbs</button>
+                    <button type="button" class="preset-btn" onclick="loadWeight(115)">115 lbs</button>
+                    <button type="button" class="preset-btn" onclick="loadWeight(130)">130 lbs</button>
+                </div>
+
+                <!-- Unified Keypad Grid layout -->
+                <div class="calc-grid">
+                    <!-- Row 1 -->
+                    <button type="button" class="calc-btn calc-btn-clear" onclick="clearCalculator()">C</button>
+                    <button type="button" class="calc-btn calc-btn-op" onclick="pressOperator('/')">/</button>
+                    <button type="button" class="calc-btn calc-btn-op" onclick="pressOperator('*')">*</button>
+                    <button type="button" class="calc-btn calc-btn-op" onclick="backspaceCalculator()">⌫</button>
+                    
+                    <!-- Row 2 -->
+                    <button type="button" class="calc-btn" onclick="pressNum('7')">7</button>
+                    <button type="button" class="calc-btn" onclick="pressNum('8')">8</button>
+                    <button type="button" class="calc-btn" onclick="pressNum('9')">9</button>
+                    <button type="button" class="calc-btn calc-btn-op" onclick="pressOperator('-')">-</button>
+
+                    <!-- Row 3 -->
+                    <button type="button" class="calc-btn" onclick="pressNum('4')">4</button>
+                    <button type="button" class="calc-btn" onclick="pressNum('5')">5</button>
+                    <button type="button" class="calc-btn" onclick="pressNum('6')">6</button>
+                    <button type="button" class="calc-btn calc-btn-op" onclick="pressOperator('+')">+</button>
+
+                    <!-- Row 4 -->
+                    <button type="button" class="calc-btn" onclick="pressNum('1')">1</button>
+                    <button type="button" class="calc-btn" onclick="pressNum('2')">2</button>
+                    <button type="button" class="calc-btn" onclick="pressNum('3')">3</button>
+                    
+                    <!-- Dedicated %3 button -->
+                    <button type="button" class="calc-btn calc-btn-special" onclick="pressPercent(3)">%3</button>
+
+                    <!-- Row 5 -->
+                    <button type="button" class="calc-btn" onclick="pressNum('0')">0</button>
+                    <button type="button" class="calc-btn" onclick="pressNum('.')">.</button>
+                    
+                    <!-- Dedicated %4 button -->
+                    <button type="button" class="calc-btn calc-btn-special" onclick="pressPercent(4)">%4</button>
+                    
+                    <!-- Dedicated %5 button -->
+                    <button type="button" class="calc-btn calc-btn-special" onclick="pressPercent(5)">%5</button>
+
+                    <!-- Row 6 -->
+                    <div style="grid-column: span 1;"></div>
+                    <button type="button" class="calc-btn calc-btn-equal" onclick="evaluateCalculator()">=</button>
+                    <div style="grid-column: span 1;"></div>
+                </div>
+
+                <p class="disclaimer-text">
+                    Input a sheep weight and tap any of the dedicated teal buttons to find correspon
+
+            </section>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Disclaimer: this calculator runs entirely in your web browser. No background log databases or cookies are active.</p>
+        </div>
+    </footer>
+
+    <script>
+        let calcExpression = "";
+        let isSpecialFormatted = false;
+
+        function updateCalcDisplay() {
+            const formulaDisplay = document.getElementById("calc-formula");
+            const resultDisplay = document.getElementById("calc-result");
+            
+            formulaDisplay.textContent = calcExpression || "0";
+            
+            if (!isSpecialFormatted) {
+                if (calcExpression === "") {
+                    resultDisplay.textContent = "0";
+                } else {
+                    try {
+                        // Keep parsing robust and safe from code executions
+                        const sanitized = calcExpression.replace(/[^0-9+\-*/.]/g, '');
+                        if (sanitized !== "") {
+                            const evalResult = Function('"use strict";return (' + sanitized + ')')();
+                            resultDisplay.textContent = Number.isInteger(evalResult) ? evalResult : evalResult.toFixed(3);
+                        }
+                    } catch (e) {
+                        // Wait silently for full expression components
+                    }
+                }
+            }
+        }
+
+        function pressNum(num) {
+            if (isSpecialFormatted) {
+                calcExpression = "";
+                isSpecialFormatted = false;
+            }
+            calcExpression += num;
+            updateCalcDisplay();
+        }
+
+        function loadWeight(lbs) {
+            calcExpression = lbs.toString();
+            isSpecialFormatted = false;
+            updateCalcDisplay();
+        }
+
+        function pressOperator(op) {
+            isSpecialFormatted = false;
+            if (calcExpression === "") return;
+            const lastChar = calcExpression.slice(-1);
+            if (["+", "-", "*", "/"].includes(lastChar)) {
+                calcExpression = calcExpression.slice(0, -1) + op;
+            } else {
+                calcExpression += op;
+            }
+            updateCalcDisplay();
+        }
+
+        function clearCalculator() {
+            calcExpression = "";
+            isSpecialFormatted = false;
+            document.getElementById("calc-formula").textContent = "0";
+            document.getElementById("calc-result").textContent = "0";
+        }
+
+        function backspaceCalculator() {
+            if (isSpecialFormatted) {
+                clearCalculator();
+                return;
+            }
+            calcExpression = calcExpression.slice(0, -1);
+            updateCalcDisplay();
+        }
+
+        function evaluateCalculator() {
+            if (isSpecialFormatted) return;
+            try {
+                const sanitized = calcExpression.replace(/[^0-9+\-*/.]/g, '');
+                if (sanitized !== "") {
+                    const evalResult = Function('"use strict";return (' + sanitized + ')')();
+                    const finalVal = Number.isInteger(evalResult) ? evalResult : evalResult.toFixed(3);
+                    document.getElementById("calc-result").textContent = finalVal;
+                    calcExpression = finalVal.toString();
+                }
+            } catch (e) {
+                document.getElementById("calc-result").textContent = "Error";
+            }
+        }
+
+        // Dedicated %3, %4, and %5 showing clean custom layouts
+        function pressPercent(percentValue) {
+            try {
+                let baseWeightStr = calcExpression.trim();
+                
+                // If calculator starts empty, default to 100 lbs
+                if (baseWeightStr === "") {
+                    baseWeightStr = "100";
+                } else {
+                    const sanitized = baseWeightStr.replace(/[^0-9+\-*/.]/g, '');
+                    if (sanitized !== "") {
+                        try {
+                            const preEval = Function('"use strict";return (' + sanitized + ')')();
+                            baseWeightStr = preEval.toString();
+                        } catch (e) {}
+                    }
+                }
+
+                const weight = parseFloat(baseWeightStr) || 0;
+                let multiplier = 0.03;
+                let textLabel = "light feed";
+                
+                if (percentValue === 4) {
+                    multiplier = 0.04;
+                    textLabel = "middle feed";
+                } else if (percentValue === 5) {
+                    multiplier = 0.05;
+                    textLabel = "heavy feed";
+                }
+
+                const result = (weight * multiplier).toFixed(2);
+                
+                // Formula display is set precisely to the requested layout
+                document.getElementById("calc-formula").textContent = `${weight} ${textLabel} =`;
+                document.getElementById("calc-result").textContent = `${parseFloat(result)} lbs`;
+                
+                calcExpression = result.toString();
+                isSpecialFormatted = true;
+
+            } catch (e) {
+                document.getElementById("calc-result").textContent = "Error";
+            }
+        }
+    </script>
+</body>
+</html>
