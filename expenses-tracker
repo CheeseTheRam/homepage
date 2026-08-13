@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker -- Market Livestock Assistance Software</title>
+    
+    <style>
+        :root {
+            --bg-color: #faf9f6;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --primary: #0f172a;
+            --primary-hover: #334155;
+            --border-color: #e2e8f0;
+            --border-sheet: #cbd5e1;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08);
+            --border-radius: 8px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .google-doc-container {
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            box-shadow: var(--shadow-md);
+            border-radius: 4px;
+            padding: 35px 45px;
+            min-height: 500px;
+            position: relative;
+        }
+
+        .google-doc-header {
+            border-bottom: 2px solid #111111;
+            padding-bottom: 10px;
+            margin-bottom: 24px;
+        }
+
+        .google-doc-header h1 {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: #111111;
+        }
+
+        .spreadsheet-wrapper {
+            overflow-x: auto;
+            border: 1px solid var(--border-sheet);
+            border-radius: 4px;
+        }
+
+        .spreadsheet-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            background-color: #ffffff;
+        }
+
+        .spreadsheet-table th {
+            background-color: #f8fafc;
+            color: #334155;
+            font-weight: 700;
+            text-align: left;
+            border: 1px solid var(--border-sheet);
+            padding: 8px 10px;
+        }
+
+        .spreadsheet-table td {
+            border: 1px solid var(--border-sheet);
+            padding: 4px 6px;
+            position: relative;
+        }
+
+        .cell-input {
+            width: 100%;
+            border: 1px solid transparent;
+            background-color: transparent;
+            padding: 6px;
+            font-size: 0.85rem;
+            border-radius: 3px;
+        }
+
+        .cell-input:focus {
+            background-color: #ffffff;
+            border-color: #2563eb;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 7px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary { background-color: #f1f5f9; color: #475569; border-color: #cbd5e1; }
+        .btn-secondary:hover:not(:disabled) { background-color: #e2e8f0; }
+        .btn-danger-outline { background-color: #ffffff; color: #be123c; border-color: #fca5a5; }
+        .btn-danger-outline:hover:not(:disabled) { background-color: #fef2f2; }
+        .btn-danger { background-color: #be123c; color: white; border-color: #be123c; }
+        .btn-danger:hover { background-color: #9f1239; }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        #autofill-suggestion {
+            position: absolute;
+            background: #1e293b;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            pointer-events: none;
+            transform: translateY(-100%);
+            margin-top: -5px;
+        }
+
+        #autofill-suggestion span {
+            color: #fbbf24;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: #ffffff;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Custom Modal Styling */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .modal-content h3 { margin-bottom: 12px; color: #0f172a; font-size: 1.25rem; }
+        .modal-content p { margin-bottom: 24px; color: #475569; font-size: 0.95rem; }
+        .modal-actions { display: flex; justify-content: center; gap: 12px; }
+
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            padding-top: 30px;
+        }
+
+        .signature-box {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .signature-box label {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        .signature-line {
+            border-bottom: 1px solid #111;
+            height: 30px;
+        }
+
+        .date-line {
+            font-size: 0.85rem;
+            color: var(--text-main);
+            align-self: flex-end;
+            margin-top: -5px;
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .controls, #autofill-suggestion, .no-print { display: none !important; }
+            .google-doc-container { box-shadow: none; border: none; padding: 0; min-height: auto; }
+            .spreadsheet-table th, .spreadsheet-table td { border-color: #000; }
+            .cell-input { border-color: transparent !important; }
+        }
+
+        .box { border: 2px solid #333; border-radius: 8px; padding: 24px; width: 100%; max-width: 900px; }
+        .row { display: flex; gap: 20px; margin-bottom: 24px; }
+        .field { display: flex; align-items: flex-end; gap: 6px; font-size: 14px; margin-bottom: 15px; }
+        .line { flex: 1; border-bottom: 1px solid #000; font-family: sans-serif; display: flex; justify-content: center; }
+    </style>
+</head>
+<body>
+
+<header class="no-print" style="background-color: #ffffff; border-bottom: 1px solid var(--border-color); padding: 10px 0; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-sm); box-sizing: border-box; margin: 0; display: block; unicode-bidi: isolate;">
+    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 900px; margin: 0 auto; padding: 0 16px;">
+        <div style="font-size: 0.95rem; font-weight: 700; color: #1e293b; letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px; box-sizing: border-box; margin: 0; padding: 0;">
+            <span style="box-sizing: border-box; margin: 0; padding: 0;">🐏</span>
+            <h1 style="font-size: 0.95rem; font-weight: 700; color: #1e293b; letter-spacing: -0.02em;">
+                [Josephine County] <span style="color: #115e59;">unofficial expenses tracker </span>
+            </h1>
+        </div>
+        <div>
+            <button type="button" id="btn-reset-session" class="btn btn-secondary" title="Clears inputs to start with a fresh sheep profile">
+                🔄 Reset Session
+            </button>
+        </div>
+    </div>
+</header>
+    
+<div class="container">
+    <div class="google-doc-container">
+        
+        <div class="google-doc-header">
+            <h1>Expense Tracker</h1>
+            <p>Write down all your expenses for both your Market Lamb and Backup. If backup is shared, only cover your half of the expenses for the back up</p>
+        </div>
+
+        <div id="autofill-suggestion">Suggestion: <strong id="suggestion-text"></strong> <span>[Press '/']</span></div>
+
+        <div class="spreadsheet-wrapper">
+            <table class="spreadsheet-table">
+                <thead>
+                    <tr>
+                        <th style="width: 12%;">Date</th>
+                        <th style="width: 26%;">Item Details</th>
+                        <th style="width: 20%;">Purchased From</th>
+                        <th style="width: 10%;">Price ($)</th>
+                        <th style="width: 8%;">Quantity</th>
+                        <th style="width: 12%;">Total ($)</th>
+                        <th class="no-print" style="width: 12%; text-align: center;">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="fixed-top-body">
+                    <tr style="background-color: #f1f5f9;">
+                        <td><input type="text" class="cell-input" id="ap-date" placeholder="MM/DD/YY"></td>
+                        <td style="font-weight: 700; padding-left: 10px;">Animal Purchase</td>
+                        <td><input type="text" class="cell-input" id="ap-vendor" placeholder="Breeder / Farm"></td>
+                        <td><input type="text" class="cell-input" id="ap-price" placeholder="Num or BOF"></td>
+                        <td><input type="number" step="1" class="cell-input" id="ap-qty" value="1"></td>
+                        <td id="ap-total-display" style="font-weight:bold; padding-left:10px;">$0.00</td>
+                        <td class="no-print"></td>
+                    </tr>
+                </tbody>
+                <tbody id="ledger-body">
+                    <!-- Rows will be generated here -->
+                </tbody>
+                <tfoot>
+                    <tr style="background-color: #f8fafc; font-weight: 800; font-size: 0.95rem; border-top: 2px solid #cbd5e1;">
+                        <td colspan="5" style="text-align: right; padding-right: 15px; padding-top: 10px; padding-bottom: 10px;">GRAND TOTAL:</td>
+                        <td id="grand-total-display" style="padding-left:10px;">$0.00</td>
+                        <td class="no-print"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <input type="file" id="import-csv" accept=".csv" style="display: none;">
+        
+        <div class="controls no-print">
+            <button type="button" id="btn-add-row" class="btn btn-secondary">➕ Add Blank Row</button>
+            <div style="display: flex; gap: 10px;">
+                <button type="button" id="btn-import-csv" class="btn btn-secondary">📂 Import .CSV</button>
+                <button type="button" id="btn-export-csv" class="btn btn-secondary">📥 Export .CSV</button>
+                <button type="button" class="btn btn-primary" onclick="window.print()">🖨️ Print Sheet</button>
+            </div>
+        </div>
+        <br/>
+        <div class="box">
+            <div class="row">
+                <div style="flex: 3; display: flex; flex-direction: column; gap: 12px;">
+                    <div class="field">Participant Signature: <span class="line"></span></div>
+                    <div class="field"><span class="line"></span></div>
+                </div>
+                <div class="field" style="flex: 1; align-self: flex-start;">Date: <span class="line"></span></div>
+            </div>
+            <div class="row" style="margin: 0">
+                <div style="flex: 3; display: flex; flex-direction: column; gap: 12px;">
+                    <div class="field">Leader Signature: <span class="line"></span></div>
+                    <div class="field"><span class="line"></span></div>
+                </div>
+                <div class="field" style="flex: 1; align-self: flex-start;">Date: <span class="line"></span></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div style="width: 100%; margin: 0 auto; padding: 0 16px; background-color: #0f172a; color: #94a3b8; padding: 20px 0; border-top: 1px solid #1e293b; font-size: 0.75rem; text-align: center;">
+    <p style="max-width: 650px; margin: 0 auto; line-height: 1.5;">Disclaimer: this website requires no cookies. All information is calculated on the page, and info does not leave the site unless you decide to Export for paperwork purposes.</p>
+</div>
+
+<!-- Custom Confirmation Modal for Reset -->
+<div id="reset-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Reset Session?</h3>
+        <p>This will clear all your rows and start fresh. Are you sure you want to proceed?</p>
+        <div class="modal-actions">
+            <button id="btn-cancel-reset" class="btn btn-secondary">Cancel</button>
+            <button id="btn-confirm-reset" class="btn btn-danger">Yes, Reset</button>
+        </div>
+    </div>
+</div>
+    
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const ledgerBody = document.getElementById("ledger-body");
+        const btnAddRow = document.getElementById("btn-add-row");
+        const btnExportCsv = document.getElementById("btn-export-csv");
+        const btnImportCsv = document.getElementById("btn-import-csv");
+        const inputImportCsv = document.getElementById("import-csv");
+        
+        // Reset Modal Elements
+        const btnResetSession = document.getElementById("btn-reset-session");
+        const resetModal = document.getElementById("reset-modal");
+        const btnConfirmReset = document.getElementById("btn-confirm-reset");
+        const btnCancelReset = document.getElementById("btn-cancel-reset");
+        
+        const suggestionBox = document.getElementById("autofill-suggestion");
+        const suggestionText = document.getElementById("suggestion-text");
+        const AUTOFILLITEMS = [
+            "Feed", "Hay", "Veterinary Services", "Vaccines", "Bedding", 
+            "Lamb Slam", "Show Rite", "Rogue Sheep Flock Grain", "Grain", "Grass Hay",
+            "Alfalfa", "Third Cutting Grass Hay Medow mix w. Alfalfa",
+            "Electrolytes", "Valbazen", "Ivermec", "Penicillin", 
+            "Vitamin B Oral", "Vitamin B Injectable", "Coppertox",
+            "Iodine", "Hoof Trimmers", "Shears", "13 comb shearing blades",
+            "fine shearing blades", "Straw", "Wood Shavings", "Bedding Pellets", 
+            "Labels", "Printed Pictures", "Vetrinary Visit:", "Spray Bottles", 
+            "Carding Combe", "Brushes", "Mineral Oil", "Cooling Oil", 
+            "Pink Oil", "Lambie Jammies", "Spandex Tubes", "Pro-Cools", 
+            "Weaver Blanket", "Blanket", "Weaver Pro-Cool", "Stand",
+            "Halters", "Purple Mineral Sheep Tub", "Baking Soda", "Drenchers",
+            "Needles", "Extension Cords", "Combs", "Freshen Up", "Revive",
+            "Pro Pink", "Chain Halter", "Rope Halter", "Leg Wraps",
+            "Vitamin E", "Desposable Gloves", "Pitchfork", "Hayfork",
+            "Snow Shovel", "Square Shovel", "Spade Shovel", "Leave Rake",
+            "Rake", "Broom", "Hay Broom", "Wheel Barrow", "Wheelbarrow",
+            "AM FM Radio", "Radio AM FM", "Extension Cord", "Extension Cord Strip",
+            "Blower", "Animal Blower", "Animal Hair Blower", "Shampoo",
+            "Sullivan Shampoo and Conditioner", "Sullivan Conditioner"
+        ];
+        let ledgerData = [];
+        let historyDict = {
+            itemDetails: new Set(AUTOFILLITEMS),
+            purchasedFrom: new Set(["Grange Co-op", "Tractor Supply", "Farmers", "Rainy's Corner", "Amazon.com", "Weaver Trucks", "Sullivan Truck", "Walmart", "Walmart.com", "DC Farmers Co-op", "Winco Foods" ])
+        };
+        let currentActiveInput = null;
+        let currentSuggestion = "";
+        let apTotalValue = 0;
+
+        // Setup Animal Purchase fixed row
+        const apDate = document.getElementById("ap-date");
+        const apPrice = document.getElementById("ap-price");
+        const apQty = document.getElementById("ap-qty");
+        const apTotalDisplay = document.getElementById("ap-total-display");
+        const grandTotalDisplay = document.getElementById("grand-total-display");
+
+        apDate.value = getFormattedDate();
+
+        function updateApRow() {
+            let priceVal = apPrice.value.trim().toUpperCase();
+            const qtyVal = parseFloat(apQty.value) || 0;
+            
+            if (priceVal === "BOF") {
+                apTotalValue = 0;
+                apTotalDisplay.innerText = "BOF";
+            } else {
+                priceVal = priceVal.replace(/[^0-9.]/g, '');
+                apTotalValue = (parseFloat(priceVal) || 0) * qtyVal;
+                apTotalDisplay.innerText = `$${apTotalValue.toFixed(2)}`;
+            }
+            updateGrandTotal();
+        }
+
+        apPrice.addEventListener("input", updateApRow);
+        apQty.addEventListener("input", updateApRow);
+
+        function updateGrandTotal() {
+            let sum = apTotalValue;
+            ledgerData.forEach(row => {
+                sum += row.total;
+            });
+            grandTotalDisplay.innerText = `$${sum.toFixed(2)}`;
+        }
+
+        // Initialize with one empty row
+        addRow();
+
+        btnAddRow.addEventListener("click", addRow);
+        btnExportCsv.addEventListener("click", exportCSV);
+        btnImportCsv.addEventListener("click", () => inputImportCsv.click());
+        
+        inputImportCsv.addEventListener("change", (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const text = evt.target.result;
+                processImportedCSV(text);
+            };
+            reader.readAsText(file);
+            e.target.value = ''; 
+        });
+
+        btnResetSession.addEventListener("click", () => {
+            resetModal.style.display = "flex";
+        });
+
+        btnCancelReset.addEventListener("click", () => {
+            resetModal.style.display = "none";
+        });
+
+        btnConfirmReset.addEventListener("click", () => {
+            // Clear Animal Purchase Data
+            document.getElementById("ap-date").value = getFormattedDate();
+            document.getElementById("ap-vendor").value = "";
+            document.getElementById("ap-price").value = "";
+            document.getElementById("ap-qty").value = "1";
+            updateApRow();
+
+            // Clear Ledger Data
+            ledgerData = [];
+            addRow(); // adds the single empty row and renders it
+            
+            resetModal.style.display = "none";
+        });
+
+        function processImportedCSV(csvText) {
+            const lines = csvText.split(/\r?\n/);
+            if (lines.length < 2) return; 
+
+            if (ledgerData.length === 1 && !ledgerData[0].details && !ledgerData[0].vendor && ledgerData[0].price === 0) {
+                ledgerData = [];
+            }
+
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                const cols = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(col => col.replace(/^"|"$/g, '').trim());
+                
+                if (cols[1] === "Animal Purchase") {
+                    document.getElementById("ap-date").value = cols[0] || "";
+                    document.getElementById("ap-vendor").value = cols[2] || "";
+                    document.getElementById("ap-price").value = cols[3] || "";
+                    document.getElementById("ap-qty").value = cols[4] || "1";
+                    updateApRow();
+                    continue; 
+                }
+
+                if (cols[1] === "GRAND TOTAL" || cols[4] === "GRAND TOTAL") continue;
+
+                if (cols.length >= 6) {
+                    ledgerData.push({
+                        id: "row-" + Date.now() + "-" + i,
+                        date: cols[0],
+                        details: cols[1],
+                        vendor: cols[2],
+                        price: parseFloat(cols[3]) || 0,
+                        qty: parseFloat(cols[4]) || 1,
+                        total: parseFloat(cols[5]) || 0
+                    });
+                }
+            }
+            renderTable();
+        }
+
+        function addRow() {
+            const rowId = "row-" + Date.now();
+            const defaultDate = getFormattedDate();
+            
+            ledgerData.push({
+                id: rowId, date: defaultDate, details: "", vendor: "", price: 0, qty: 1, total: 0
+            });
+            renderTable();
+        }
+
+        function getFormattedDate() {
+            const d = new Date();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const year = String(d.getFullYear()).slice(-2);
+            return `${month}/${day}/${year}`;
+        }
+
+        function renderTable() {
+            ledgerBody.innerHTML = "";
+            ledgerData.forEach((row, index) => {
+                const tr = document.createElement("tr");
+                tr.dataset.id = row.id;
+
+                tr.innerHTML = `
+                    <td><input type="text" class="cell-input cell-date" value="${row.date}" placeholder="MM/DD/YY"></td>
+                    <td><input type="text" class="cell-input cell-details" value="${row.details}"></td>
+                    <td><input type="text" class="cell-input cell-vendor" value="${row.vendor}"></td>
+                    <td><input type="number" step="0.01" class="cell-input cell-price" value="${row.price || ''}"></td>
+                    <td><input type="number" step="1" class="cell-input cell-qty" value="${row.qty || 1}"></td>
+                    <td style="background:#f8fafc; font-weight:bold; padding-left:10px;">$${row.total.toFixed(2)}</td>
+                    <td class="no-print" style="text-align: center;">
+                        <div class="action-buttons">
+                            <button type="button" class="btn btn-secondary btn-up" style="padding: 2px 6px;" title="Move Up" ${index === 0 ? 'disabled' : ''}>↑</button>
+                            <button type="button" class="btn btn-secondary btn-down" style="padding: 2px 6px;" title="Move Down" ${index === ledgerData.length - 1 ? 'disabled' : ''}>↓</button>
+                            <button type="button" class="btn btn-danger-outline btn-delete" style="padding: 2px 6px;" title="Delete Row">X</button>
+                        </div>
+                    </td>
+                `;
+
+                const inputs = tr.querySelectorAll('.cell-input');
+                inputs.forEach(input => {
+                    input.addEventListener("input", (e) => updateRowData(row.id, tr));
+                });
+
+                const detailsInput = tr.querySelector('.cell-details');
+                const vendorInput = tr.querySelector('.cell-vendor');
+                setupAutofill(detailsInput, historyDict.itemDetails);
+                setupAutofill(vendorInput, historyDict.purchasedFrom);
+
+                // Row Action Listeners
+                tr.querySelector('.btn-delete').addEventListener("click", () => {
+                    ledgerData = ledgerData.filter(r => r.id !== row.id);
+                    renderTable();
+                    hideSuggestion();
+                });
+
+                tr.querySelector('.btn-up').addEventListener("click", () => {
+                    const currentIndex = ledgerData.findIndex(r => r.id === row.id);
+                    if (currentIndex > 0) {
+                        // Swap with row above
+                        const temp = ledgerData[currentIndex];
+                        ledgerData[currentIndex] = ledgerData[currentIndex - 1];
+                        ledgerData[currentIndex - 1] = temp;
+                        renderTable();
+                    }
+                });
+
+                tr.querySelector('.btn-down').addEventListener("click", () => {
+                    const currentIndex = ledgerData.findIndex(r => r.id === row.id);
+                    if (currentIndex < ledgerData.length - 1) {
+                        // Swap with row below
+                        const temp = ledgerData[currentIndex];
+                        ledgerData[currentIndex] = ledgerData[currentIndex + 1];
+                        ledgerData[currentIndex + 1] = temp;
+                        renderTable();
+                    }
+                });
+
+                ledgerBody.appendChild(tr);
+            });
+            updateGrandTotal();
+        }
+
+        function updateRowData(id, tr) {
+            const row = ledgerData.find(r => r.id === id);
+            if (!row) return;
+
+            row.date = tr.querySelector('.cell-date').value;
+            row.details = tr.querySelector('.cell-details').value;
+            row.vendor = tr.querySelector('.cell-vendor').value;
+            row.price = parseFloat(tr.querySelector('.cell-price').value) || 0;
+            row.qty = parseFloat(tr.querySelector('.cell-qty').value) || 0;
+            row.total = row.price * row.qty;
+            
+            if (row.details.trim().length > 2) historyDict.itemDetails.add(row.details.trim());
+            if (row.vendor.trim().length > 2) historyDict.purchasedFrom.add(row.vendor.trim());
+
+            tr.children[5].innerText = `$${row.total.toFixed(2)}`;
+            updateGrandTotal();
+        }
+
+        function setupAutofill(inputElement, dictionarySet) {
+            inputElement.addEventListener("input", (e) => {
+                const val = e.target.value.toLowerCase();
+                currentSuggestion = "";
+                
+                if (val.length > 0) {
+                    const matches = Array.from(dictionarySet).filter(item => item.toLowerCase().startsWith(val));
+                    if (matches.length > 0) {
+                        currentSuggestion = matches[0];
+                        showSuggestion(inputElement, currentSuggestion);
+                    } else {
+                        hideSuggestion();
+                    }
+                } else {
+                    hideSuggestion();
+                }
+            });
+
+            inputElement.addEventListener("keydown", (e) => {
+                if (e.key === '/' && currentSuggestion && currentSuggestion.toLowerCase() !== inputElement.value.toLowerCase()) {
+                    e.preventDefault(); 
+                    inputElement.value = currentSuggestion;
+                    updateRowData(inputElement.closest('tr').dataset.id, inputElement.closest('tr'));
+                    hideSuggestion();
+                }
+            });
+
+            inputElement.addEventListener("blur", () => {
+                setTimeout(hideSuggestion, 150); 
+            });
+        }
+
+        function showSuggestion(element, text) {
+            const rect = element.getBoundingClientRect();
+            suggestionText.innerText = text;
+            suggestionBox.style.display = "block";
+            suggestionBox.style.top = (rect.top + window.scrollY) + "px";
+            suggestionBox.style.left = (rect.left + window.scrollX) + "px";
+            currentActiveInput = element;
+        }
+
+        function hideSuggestion() {
+            suggestionBox.style.display = "none";
+            currentActiveInput = null;
+            currentSuggestion = "";
+        }
+
+        function exportCSV() {
+            const csvRows = ["Date,Item Details,Purchased From,Price,Quantity,Total"];
+            
+            const apVendor = document.getElementById("ap-vendor").value.replace(/"/g, '""');
+            const apPriceStr = document.getElementById("ap-price").value.trim().toUpperCase();
+            const apTotalStr = apPriceStr === "BOF" ? "BOF" : apTotalValue.toFixed(2);
+            csvRows.push(`"${document.getElementById("ap-date").value}","Animal Purchase","${apVendor}","${document.getElementById("ap-price").value}",${document.getElementById("ap-qty").value},${apTotalStr}`);
+
+            ledgerData.forEach(row => {
+                const cleanDetails = row.details.replace(/"/g, '""');
+                const cleanVendor = row.vendor.replace(/"/g, '""');
+                csvRows.push(`"${row.date}","${cleanDetails}","${cleanVendor}",${row.price},${row.qty},${row.total}`);
+            });
+
+            let grandTotalSum = apTotalValue + ledgerData.reduce((acc, row) => acc + row.total, 0);
+            csvRows.push(`"","","","","GRAND TOTAL",${grandTotalSum.toFixed(2)}`);
+
+            const blob = new Blob([csvRows.join("\n")], { type: "text/csv" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `tax_expenses_${getFormattedDate().replace(/\//g, '-')}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    });
+</script>
+</body>
+</html>
